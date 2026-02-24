@@ -94,3 +94,37 @@ When updating an entry:
 ### Project References
 
 When work relates to a specific project, mention the project name in the daily entry's Progress section and consider updating the corresponding project summary file in `projects/`.
+
+## TODO.md Conventions
+
+### Completed Task Format
+
+When marking tasks complete and moving them to the Completed section, use this format:
+
+```markdown
+- [x] Task description - YYYY-MM-DD
+  - Additional details or notes on indented lines
+```
+
+**Example:**
+```markdown
+## Completed
+
+- [x] Finish upgrading backstage plugins (ENGPROD-8917) - 2026-02-24
+  - Tested visual-qontract and web-rca plugins locally and in ephemeral environments
+  - [x] visual-qontract plugin
+  - [x] web-rca plugin
+```
+
+This date-stamping allows looking back to see exactly when tasks were completed, which is useful for:
+- Performance reviews and status reports
+- Tracking how long certain types of work take
+- Referencing when features were delivered
+- Understanding project timelines
+
+### Task Completion Workflow
+
+1. Mark task complete in daily entry (`- [ ]` → `- [x]`)
+2. Move task from "## Today" to "## Completed" in TODO.md
+3. Add completion date in format `- 2026-02-24`
+4. Preserve any details or sub-tasks on indented lines below

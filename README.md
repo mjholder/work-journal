@@ -26,7 +26,50 @@ Each daily entry includes:
 - **Blockers/Issues** - Anything blocking progress
 - **Tomorrow's Focus** - Plans for the next day
 
-## Examples
+## Using the Journal Skill
+
+The journal skill (`/journal`) allows you to update your journal from **any directory** without switching repos. It runs in isolated context so it doesn't pollute your current project's conversation.
+
+### Quick Commands
+
+| Command | What it does | Example |
+|---------|-------------|---------|
+| `/journal "text"` | Add progress update | `/journal "Completed authentication refactor"` |
+| `/journal task "text"` | Add new task | `/journal task "Review PR #123"` |
+| `/journal done "text"` | Mark task complete | `/journal done "authentication refactor"` |
+| `/journal project name "text"` | Update project | `/journal project backstage "Finished web-rca plugin"` |
+| `/journal note "text"` | Add note | `/journal note "API requires auth headers"` |
+
+### Benefits
+
+- **Works from anywhere** - Update journal from any git repo
+- **Fast** - No need to switch directories or open files manually
+- **Date-stamped completions** - Completed tasks automatically get date stamps
+- **Consistent** - Updates both daily entry and TODO.md automatically
+
+### Example Usage
+
+**While working in another repo:**
+```bash
+cd ~/git_repos/my-project
+# Just finished something
+/journal "Fixed bug in login flow (PROJ-456)"
+
+# Add tomorrow's task without switching repos
+/journal task "Deploy fix to staging"
+
+# Mark current task done
+/journal done "bug in login flow"
+```
+
+**Update project progress:**
+```bash
+/journal project my-project "Completed phase 1: authentication system refactor"
+```
+
+All updates go to `~/git_repos/work-journal/` automatically.
+
+## Conversational Workflow Examples
 
 **Morning:**
 > "Claude, create today's entry and add these JIRA tasks: ABC-123, ABC-124"
