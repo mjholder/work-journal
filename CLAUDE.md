@@ -77,6 +77,72 @@ This journal uses a conversational workflow - there are no scripts to run. All e
 - **Incremental updates**: Expect users to add information throughout the day, not all at once
 - **Natural language**: Respond to requests like "add this to my progress" or "mark that task done"
 
+### Intelligent Update Detection
+
+Claude Code should **automatically detect and update** relevant journal files based on user messages, even when not explicitly instructed. Analyze each user message for journal-relevant content and update appropriate files proactively.
+
+**Detect these patterns and auto-update:**
+
+1. **Progress updates** - User describes work completed, in-progress, or issues encountered
+   - Keywords: "I fixed", "working on", "updated", "found an issue", "tested", "deployed", "started", "completed"
+   - Actions: Update today's entry Progress section; update relevant project file if applicable
+   - Example: "I fixed the failing tests" → Add to Progress section in daily entry
+
+2. **Task completions** - User indicates they finished a task
+   - Keywords: "done", "finished", "completed", "shipped", "merged", "deployed"
+   - Actions: Mark task complete in daily entry; move from "Today" to "Completed" in TODO.md with date stamp
+   - Example: "The PR is merged" → Mark PR task complete in both files
+
+3. **New tasks discovered** - User mentions new work that needs doing
+   - Keywords: "need to", "should", "TODO", "next I'll", "have to", "going to"
+   - Actions: Add to daily entry Tasks section if for today, otherwise add to TODO.md Upcoming section
+   - Example: "I need to reconfigure the precommit hook" → Add to TODO.md Upcoming
+
+4. **Blockers/Issues** - User mentions problems, errors, or things blocking progress
+   - Keywords: "blocked", "error", "failing", "broken", "issue", "problem", "can't"
+   - Actions: Add to Blockers/Issues section in daily entry; consider adding remediation task to TODO
+   - Example: "The API is returning 500 errors" → Add to Blockers section
+
+5. **Project context** - User mentions specific projects or tickets
+   - Patterns: JIRA ticket numbers (e.g., "ENGPROD-1234"), project names mentioned in recent daily entries
+   - Actions: Update relevant project summary file in `projects/` if significant progress
+   - Determine project file by: checking recent daily entries for project names, looking at TODO.md task context
+
+**Multi-file update strategy:**
+
+When user provides an update, determine which files need updating and update them all:
+- **Daily entry** (almost always): Add progress notes, mark tasks complete, note blockers
+- **TODO.md**: Mark tasks complete with date stamp, add new urgent tasks, move completed items
+- **Project files**: Update if significant milestone reached or status changes for an active project
+
+**Context-aware decision making:**
+
+- Use conversation history and recent daily entries to infer which project is being discussed
+- If multiple projects are active, determine which one based on recent context
+- Default to creating/updating a project file if work spans multiple days or has substantial scope
+- Only ask for clarification if the update is ambiguous AND could lead to incorrect documentation
+
+**Examples of automatic updates:**
+
+| User Message | Automatic Actions |
+|--------------|-------------------|
+| "I rebootstrapped the ibutsu plugin and it's working now" | • Add to daily entry Progress section<br>• Update backstage-plugin-upgrade project if exists |
+| "The tests are all passing now, that's done" | • Mark test-related task complete in daily entry<br>• Move task to Completed in TODO.md with date<br>• Add completion note to Progress |
+| "Found a bug in the auth flow, need to investigate tomorrow" | • Add to Blockers/Issues in daily entry<br>• Add investigation task to TODO.md Upcoming |
+| "Starting work on the firelink plugin upgrade" | • Add to daily entry Progress section<br>• Update task in TODO.md to in-progress if exists<br>• Update backstage-plugin-upgrade project |
+
+**Confirmation approach:**
+
+- **Always ask clarifying questions** to help the user articulate exactly what they mean
+- Detect what needs updating, but present the user with what you plan to update and ask if it's correct
+- Use questions to help disambiguate:
+  - "Sounds like you fixed the tests - should I mark that task complete and add the details to your progress?"
+  - "Is this a blocker that's preventing you from moving forward, or just a note about what you discovered?"
+  - "Should I update the backstage-plugin-upgrade project file with this progress?"
+- Help the user refine their wording if it seems unclear or could be documented more precisely
+- Present what you understood from their update and let them correct or confirm before writing
+- The goal is collaborative documentation - working together to capture the work accurately
+
 ## Working with Entries
 
 ### Reading Today's Entry

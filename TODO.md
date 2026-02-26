@@ -1,33 +1,42 @@
 # TODO
 
-## Today (2026-02-24)
+## Today (2026-02-26)
 
-## Upcoming
-
-### Backstage Plugins - Completed Plugins (Visual Qontract, Web-RCA, Snyk)
-- [ ] Push changes for Visual Qontract, Web-RCA, and Snyk
-- [ ] Create PRs for all three plugins
 - [ ] Create official releases
 - [ ] Deploy to stage
 - [ ] Deploy to prod
 
-### Backstage Plugins - Remaining (13 plugins)
-- [ ] Status Page plugin upgrade
-- [ ] Firelink plugin upgrade
-- [ ] Redhat AI plugin upgrade
-- [ ] Ibutsu plugin upgrade
-- [ ] CPT plugin upgrade
-- [ ] Openshift plugin upgrade
+## Upcoming
+
+- [ ] Fix openshift plugin proxy config in stage and prod environments
+
+### Backstage Plugins - Remaining (6 plugins)
 - [ ] Convo Frontend plugin upgrade
 - [ ] Security plugin upgrade
 - [ ] Progressive Delivery plugin upgrade
 - [ ] IDAP plugin upgrade
 - [ ] Kafka plugin upgrade
 - [ ] Metrics and Monitoring plugin upgrade
-- [ ] Appstage plugin upgrade
 
 ## Completed
 
+- [x] Openshift plugin upgrade - 2026-02-26
+  - Fixed proxy config issue preventing cluster API requests
+  - Discovered and investigating 401 auth error with GraphQL requests
+  - PR: https://github.com/RedHatInsights/backstage-plugin-openshift/pull/13
+- [x] Firelink plugin upgrade - 2026-02-26
+  - Rebootstrapped by Juan, reviewed and updated local dev wiring
+- [x] CPT plugin upgrade - 2026-02-26
+  - Rebootstrapped by Juan, reviewed and updated local dev wiring
+- [x] Ibutsu plugin upgrade - 2026-02-25
+  - Resolved cert issue by disabling cert checking for local development
+  - PR: https://github.com/RedHatInsights/backstage-plugin-ibutsu/pull/6
+- [x] Reconfigure redhat precommit hook to prevent committing secrets to public repos - 2026-02-25
+- [x] Create PRs for all three plugins - 2026-02-25
+  - Visual Qontract and Web-RCA: https://github.com/RedHatInsights/backstage-plugin-visual-qontract/pull/43
+  - Snyk: https://github.com/RedHatInsights/snyk-plugin-dev/pull/1
+  - Fixed all failing tests (51 passing, 3 skipped)
+- [x] Push changes for Visual Qontract, Web-RCA, and Snyk plugins - 2026-02-25
 - [x] Upgrade snyk plugin for backstage - 2026-02-24
   - Rebootstrapped, tested locally and in ephemeral (working!)
 - [x] Get Claude project setup for dev journal in claude.ai - 2026-02-24
