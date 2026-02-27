@@ -28,9 +28,9 @@
   - Tested locally and in ephemeral - working as expected
 - [x] Kafka-Info plugin upgrade - 2026-02-27
   - Rebootstrapped with modern Backstage tooling
-  - Added comprehensive logging and error diagnostics with troubleshooting checklists
   - Fixed loggerApiRef compatibility issue
   - Tested locally and in ephemeral - working as expected
+  - PR: https://github.com/RedHatInsights/backstage-plugin-kafka-info/pull/6
 - [x] Openshift plugin upgrade - 2026-02-26
   - Fixed proxy config issue preventing cluster API requests
   - Discovered and investigating 401 auth error with GraphQL requests
