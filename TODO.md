@@ -1,25 +1,36 @@
 # TODO
 
-## Today (2026-02-26)
+## Today (2026-02-27)
 
-- [ ] Create official releases
+- [ ] Investigate openshift plugin 401 auth error
+- [ ] Create official releases for all 7 plugins (Visual Qontract, Web-RCA, Snyk, Ibutsu, Openshift, Firelink, CPT)
 - [ ] Deploy to stage
 - [ ] Deploy to prod
 
 ## Upcoming
 
+- [ ] Improve kafka-info plugin UX for "no data" scenarios
+  - Currently displays as an error when no metrics match the consumer group
+  - Should display as informational "no data available" message instead of error state
 - [ ] Fix openshift plugin proxy config in stage and prod environments
 
-### Backstage Plugins - Remaining (6 plugins)
+### Backstage Plugins - Remaining (3 plugins)
 - [ ] Convo Frontend plugin upgrade
-- [ ] Security plugin upgrade
 - [ ] Progressive Delivery plugin upgrade
-- [ ] IDAP plugin upgrade
-- [ ] Kafka plugin upgrade
 - [ ] Metrics and Monitoring plugin upgrade
+
+**Note:** IDAP plugin is an upstream plugin and does not need to be upgraded
 
 ## Completed
 
+- [x] Security plugin upgrade - 2026-02-27
+  - Rebootstrapped with modern Backstage tooling
+  - Tested locally and in ephemeral - working as expected
+- [x] Kafka-Info plugin upgrade - 2026-02-27
+  - Rebootstrapped with modern Backstage tooling
+  - Added comprehensive logging and error diagnostics with troubleshooting checklists
+  - Fixed loggerApiRef compatibility issue
+  - Tested locally and in ephemeral - working as expected
 - [x] Openshift plugin upgrade - 2026-02-26
   - Fixed proxy config issue preventing cluster API requests
   - Discovered and investigating 401 auth error with GraphQL requests
