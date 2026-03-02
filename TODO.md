@@ -1,9 +1,9 @@
 # TODO
 
-## Today (2026-02-27)
+## Today (2026-03-02)
 
 - [ ] Investigate openshift plugin 401 auth error
-- [ ] Create official releases for all 7 plugins (Visual Qontract, Web-RCA, Snyk, Ibutsu, Openshift, Firelink, CPT)
+- [ ] Create official releases for all 14 completed plugins
 - [ ] Deploy to stage
 - [ ] Deploy to prod
 
@@ -14,15 +14,33 @@
   - Should display as informational "no data available" message instead of error state
 - [ ] Fix openshift plugin proxy config in stage and prod environments
 
-### Backstage Plugins - Remaining (3 plugins)
-- [ ] Convo Frontend plugin upgrade
-- [ ] Progressive Delivery plugin upgrade
-- [ ] Metrics and Monitoring plugin upgrade
+### Backstage Plugins - All Complete! 🎉
+All 14 plugins have been upgraded and are ready for deployment.
 
 **Note:** IDAP plugin is an upstream plugin and does not need to be upgraded
 
 ## Completed
 
+- [x] Appstage Entity Provider plugin upgrade - 2026-03-02
+  - Rebootstrapped with modern Backstage tooling
+  - Updated local dev environment
+  - Tested locally - working correctly
+  - Skipped ephemeral testing (plugin itself unchanged, only dev environment updated)
+  - PR: https://gitlab.cee.redhat.com/hcm-engprod/backstage-plugin-appstage-entity-provider/-/merge_requests/7
+- [x] AI-Search plugin upgrade - 2026-03-02
+  - Bootstrapped with modern Backstage tooling
+  - Tested locally - works great!
+  - Cannot test in ephemeral (tangerine backend dependency not available in ephemeral environments)
+  - PR: https://github.com/RedHatInsights/backstage-plugin-ai-search-frontend/pull/45
+- [x] Progressive Delivery plugin upgrade - 2026-03-02
+  - Rebootstrapped with modern Backstage tooling
+  - Tested locally
+  - PR: https://github.com/RedHatInsights/backstage-plugin-progressive-delivery/pull/30
+  - Note: Ephemeral testing may need more work to get inscope-resources service working properly
+- [x] Metrics and Monitoring plugin upgrade - 2026-03-02
+  - Rebootstrapped with modern Backstage tooling
+  - Tested locally, in ephemeral, and in stage - all working without issues
+  - PR: https://github.com/RedHatInsights/backstage-plugin-metrics-and-monitoring/pull/4
 - [x] Security plugin upgrade - 2026-02-27
   - Rebootstrapped with modern Backstage tooling
   - Tested locally and in ephemeral - working as expected

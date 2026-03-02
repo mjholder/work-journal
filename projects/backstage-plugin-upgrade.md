@@ -16,11 +16,11 @@ Upgrading all backstage plugins to latest versions. Each plugin goes through an 
 
 ## Current Status
 
-**Fully Deployed to Prod:** 2/15
+**Fully Deployed to Prod:** 2/16
 - Redhat AI ✓ (completed before journal started)
 - Appstage ✓ (completed before journal started)
 
-**PRs Created, Ready for Release/Deploy:** 7/15
+**PRs Created, Ready for Release/Deploy:** 14/17 🎉
 - Visual Qontract ✓ (PR #43)
 - Web-RCA ✓ (PR #43)
 - Snyk ✓ (PR #1)
@@ -28,14 +28,18 @@ Upgrading all backstage plugins to latest versions. Each plugin goes through an 
 - Openshift ✓ (PR #13)
 - Firelink ✓ (Juan's work)
 - CPT ✓ (Juan's work)
+- Kafka-Info ✓ (PR #6)
+- Security ✓ (tested locally and ephemeral)
+- Metrics-and-Monitoring ✓ (PR #4)
+- Progressive-Delivery ✓ (PR #30)
+- AI-Search/Convo Frontend ✓ (PR #45 - same plugin, different names)
+- Appstage Entity Provider ✓ (MR #7)
 
-**In Progress:** 2/15
-- Kafka (starting rebootstrap)
+**ALL DEVELOPMENT WORK COMPLETE!** Ready for deployment pipeline.
 
-**Not Started:** 6/15
-
-**Removed from Scope:** 1
+**Removed from Scope:** 2
 - Status Page (now maintained by Platform App Dev team)
+- IDAP (upstream plugin, no upgrade needed)
 
 ## Plugin Status Tracker
 
@@ -48,15 +52,16 @@ Upgrading all backstage plugins to latest versions. Each plugin goes through an 
 | Snyk | ✓ | ✓ | ✓ | ✓ | ✓ | - | - | - |
 | Ibutsu | ✓ | ✓ | - | - | ✓ | - | - | - |
 | Openshift | ✓ | ✓ | - | ✓ | ✓ | - | - | - |
-| Firelink | ✓ | ✓ | - | - | - | - | - | - |
-| CPT | ✓ | ✓ | - | - | - | - | - | - |
+| Firelink | ✓ | ✓ | - | - | ✓ | - | - | - |
+| CPT | ✓ | ✓ | - | - | ✓ | - | - | - |
+| Kafka-Info | ✓ | ✓ | - | ✓ | ✓ | - | - | - |
+| Security | ✓ | ✓ | - | ✓ | - | - | - | - |
+| Metrics-and-Monitoring | ✓ | ✓ | - | ✓ | ✓ | - | ✓ | - |
+| Progressive-Delivery | ✓ | ✓ | - | ⚠ | ✓ | - | - | - |
+| AI-Search / Convo Frontend | ✓ | ✓ | - | ⚠ | ✓ | - | - | - |
+| Appstage Entity Provider | ✓ | ✓ | - | - | ✓ | - | - | - |
 | ~~Status Page~~ | N/A - transferred to Platform App Dev team |
-| Convo Frontend | - | - | - | - | - | - | - | - |
-| Security | - | - | - | - | - | - | - | - |
-| Progressive Delivery | - | - | - | - | - | - | - | - |
-| IDAP | - | - | - | - | - | - | - | - |
-| Kafka | - | - | - | - | - | - | - | - |
-| Metrics and Monitoring | - | - | - | - | - | - | - | - |
+| ~~IDAP~~ | N/A - upstream plugin, no upgrade needed |
 
 ## Recent Progress
 
@@ -69,18 +74,22 @@ Upgrading all backstage plugins to latest versions. Each plugin goes through an 
 - 2026-02-26: Fixed openshift plugin proxy config issue for ephemeral testing. Discovered plugin is broken in production due to 401 auth error with GraphQL requests (investigating). Created PR #13.
 - 2026-02-26: Reviewed Juan's rebootstrapping of Firelink and CPT plugins. Added local dev wiring and test entities. Both complete.
 - 2026-02-26: Status Page plugin transferred to Platform App Dev team - removed from our upgrade scope.
+- 2026-02-27: Completed Kafka-Info plugin upgrade. Fixed loggerApiRef compatibility issue. Tested locally and in ephemeral - both working. Created PR #6.
+- 2026-02-27: Completed Security plugin upgrade. Rebootstrapped with modern Backstage tooling. Tested locally and in ephemeral - both working.
+- 2026-02-27: Clarified that IDAP is an upstream plugin that doesn't need upgrading - removed from scope.
+- 2026-03-02: Completed Metrics-and-Monitoring plugin upgrade. Tested locally, in ephemeral, AND in stage - all working without issues. Created PR #4.
+- 2026-03-02: Completed Progressive-Delivery plugin upgrade. Rebootstrapped and created PR #30. Note: Ephemeral testing may need additional work for inscope-resources service.
+- 2026-03-02: Completed AI-Search/Convo Frontend plugin upgrade (same plugin, different names). Bootstrapped and tested locally successfully. Cannot test in ephemeral due to missing tangerine backend dependency. Created PR #45.
+- 2026-03-02: Completed Appstage Entity Provider plugin upgrade. Updated local dev environment, tested locally. Skipped ephemeral testing since plugin itself didn't change. Created MR #7.
+- **2026-03-02: ALL 14 PLUGINS COMPLETE! 🎉** Development work finished. Ready to enter deployment phase.
 
 ## Next Steps
 
-**Immediate (for PRs in review):**
-1. Create official releases for Visual Qontract, Web-RCA, Snyk, Ibutsu, Openshift, Firelink, and CPT
-2. Deploy to stage
-3. Deploy to prod
-4. Investigate and fix Openshift plugin 401 auth error with GraphQL
-
-**Upcoming (remaining 6 plugins):**
-1. Continue with Kafka (in progress), Convo Frontend, Security, Progressive Delivery, IDAP, Metrics and Monitoring
-2. Follow same 8-step process for each
+**Deployment Pipeline (all development complete!):**
+1. Create official releases for all 14 completed plugins (Visual Qontract, Web-RCA, Snyk, Ibutsu, Openshift, Firelink, CPT, Kafka-Info, Security, Metrics-and-Monitoring, Progressive-Delivery, AI-Search/Convo-Frontend, Appstage-Entity-Provider)
+2. Deploy all completed plugins to stage
+3. Deploy all completed plugins to prod
+4. Investigate and fix Openshift plugin 401 auth error with GraphQL (can be done during/after deployment)
 
 ## Notes
 
