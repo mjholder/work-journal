@@ -20,14 +20,18 @@ Upgrading all backstage plugins to latest versions. Each plugin goes through an 
 - Redhat AI ✓ (completed before journal started)
 - Appstage ✓ (completed before journal started)
 
-**PRs Created, Ready for Release/Deploy:** 14/17 🎉
+**Deployed to Stage:** 4/16
+- Firelink ✓ (deployed 2026-03-03)
+- CPT ✓ (deployed 2026-03-03)
+- Snyk ✓ (deployed 2026-03-06)
+- Ibutsu ✓ (deployed 2026-03-06)
+
+**PRs Created, Ready for Release/Deploy:** 12/16
 - Visual Qontract ✓ (PR #43)
 - Web-RCA ✓ (PR #43)
 - Snyk ✓ (PR #1)
 - Ibutsu ✓ (PR #6)
 - Openshift ✓ (PR #13)
-- Firelink ✓ (Juan's work)
-- CPT ✓ (Juan's work)
 - Kafka-Info ✓ (PR #6)
 - Security ✓ (tested locally and ephemeral)
 - Metrics-and-Monitoring ✓ (PR #4)
@@ -35,7 +39,7 @@ Upgrading all backstage plugins to latest versions. Each plugin goes through an 
 - AI-Search/Convo Frontend ✓ (PR #45 - same plugin, different names)
 - Appstage Entity Provider ✓ (MR #7)
 
-**ALL DEVELOPMENT WORK COMPLETE!** Ready for deployment pipeline.
+**ALL DEVELOPMENT WORK COMPLETE!** Deployment pipeline in progress.
 
 **Removed from Scope:** 2
 - Status Page (now maintained by Platform App Dev team)
@@ -49,11 +53,11 @@ Upgrading all backstage plugins to latest versions. Each plugin goes through an 
 | Appstage | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Visual Qontract | ✓ | ✓ | ✓ | ✓ | ✓ | - | - | - |
 | Web-RCA | ✓ | ✓ | ✓ | ✓ | ✓ | - | - | - |
-| Snyk | ✓ | ✓ | ✓ | ✓ | ✓ | - | - | - |
-| Ibutsu | ✓ | ✓ | - | - | ✓ | - | - | - |
+| Snyk | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | - |
+| Ibutsu | ✓ | ✓ | - | - | ✓ | ✓ | ✓ | - |
 | Openshift | ✓ | ✓ | - | ✓ | ✓ | - | - | - |
-| Firelink | ✓ | ✓ | - | - | ✓ | - | - | - |
-| CPT | ✓ | ✓ | - | - | ✓ | - | - | - |
+| Firelink | ✓ | ✓ | - | - | ✓ | ✓ | ✓ | - |
+| CPT | ✓ | ✓ | - | - | ✓ | ✓ | ✓ | - |
 | Kafka-Info | ✓ | ✓ | - | ✓ | ✓ | - | - | - |
 | Security | ✓ | ✓ | - | ✓ | - | - | - | - |
 | Metrics-and-Monitoring | ✓ | ✓ | - | ✓ | ✓ | - | ✓ | - |
@@ -82,6 +86,9 @@ Upgrading all backstage plugins to latest versions. Each plugin goes through an 
 - 2026-03-02: Completed AI-Search/Convo Frontend plugin upgrade (same plugin, different names). Bootstrapped and tested locally successfully. Cannot test in ephemeral due to missing tangerine backend dependency. Created PR #45.
 - 2026-03-02: Completed Appstage Entity Provider plugin upgrade. Updated local dev environment, tested locally. Skipped ephemeral testing since plugin itself didn't change. Created MR #7.
 - **2026-03-02: ALL 14 PLUGINS COMPLETE! 🎉** Development work finished. Ready to enter deployment phase.
+- 2026-03-03: **Started deployment phase.** Created official releases for Firelink and CPT plugins. Deployed both to stage - functioning correctly. Documented follow-up work items for issues identified during testing.
+- 2026-03-05: Started investigating LDAP plugin issue (ENGPROD-9542). LDAP plugin occasionally returns incomplete results, deleting users from Backstage.
+- 2026-03-06: Created official releases for Snyk and Ibutsu plugins. Deployed both to stage - functioning correctly. **Deployment progress: 4 of 14 plugins in stage.**
 
 ## Next Steps
 
@@ -89,7 +96,33 @@ Upgrading all backstage plugins to latest versions. Each plugin goes through an 
 1. Create official releases for all 14 completed plugins (Visual Qontract, Web-RCA, Snyk, Ibutsu, Openshift, Firelink, CPT, Kafka-Info, Security, Metrics-and-Monitoring, Progressive-Delivery, AI-Search/Convo-Frontend, Appstage-Entity-Provider)
 2. Deploy all completed plugins to stage
 3. Deploy all completed plugins to prod
-4. Investigate and fix Openshift plugin 401 auth error with GraphQL (can be done during/after deployment)
+
+## Follow-Up Work
+
+Issues identified during testing that require additional work beyond rebootstrapping:
+
+### Openshift Plugin
+- [ ] **Investigate and fix 401 auth error with GraphQL requests**
+  - Plugin is currently broken in production with this issue
+  - Unexpected authentication requirement when retrieving data from GraphQL
+  - Identified: 2026-02-26
+- [ ] **Fix proxy configuration in stage and prod environments**
+  - Proxy config fixed for ephemeral testing
+  - Still needs to be updated in stage and prod
+  - Identified: 2026-02-26
+
+### Kafka-Info Plugin
+- [ ] **Improve UX for "no data" scenarios**
+  - Currently displays as an error when no metrics match the consumer group
+  - Should display as informational "no data available" message instead
+  - Enhancement/future work
+  - Identified: 2026-02-27
+
+### Progressive-Delivery Plugin
+- [ ] **Complete ephemeral testing setup**
+  - May need additional work to get inscope-resources service working properly in ephemeral environments
+  - Plugin works locally
+  - Identified: 2026-03-02
 
 ## Notes
 

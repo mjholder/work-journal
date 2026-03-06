@@ -1,14 +1,19 @@
 # TODO
 
-## Today (2026-03-02)
+## Today (2026-03-06)
 
+- [ ] Create official releases and deploy remaining 10 plugins to stage (Firelink, CPT, Snyk, and Ibutsu already done)
+  - Visual Qontract, Web-RCA, Openshift, Kafka-Info, Security, Metrics-and-Monitoring, Progressive-Delivery, AI-Search/Convo-Frontend, Appstage-Entity-Provider
 - [ ] Investigate openshift plugin 401 auth error
-- [ ] Create official releases for all 14 completed plugins
-- [ ] Deploy to stage
-- [ ] Deploy to prod
+- [ ] Deploy to prod (after stage complete)
 
 ## Upcoming
 
+- [ ] Fix LDAP plugin intermittent cataloging issue (ENGPROD-9542)
+  - LDAP plugin occasionally returns incomplete results, deleting users from Backstage
+  - Users can't sign in when their LDAP entities are missing
+  - Short-term: Investigate API trigger for LDAP cataloging process as bandaid fix
+  - Long-term: Fix root cause in upstream Backstage LDAP plugin
 - [ ] Improve kafka-info plugin UX for "no data" scenarios
   - Currently displays as an error when no metrics match the consumer group
   - Should display as informational "no data available" message instead of error state
@@ -18,6 +23,8 @@
 All 14 plugins have been upgraded and are ready for deployment.
 
 **Note:** IDAP plugin is an upstream plugin and does not need to be upgraded
+
+## Courses
 
 ## Completed
 
