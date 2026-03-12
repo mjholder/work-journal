@@ -16,17 +16,17 @@ Upgrading all backstage plugins to latest versions. Each plugin goes through an 
 
 ## Current Status
 
-**Fully Deployed to Prod:** 2/16
+**Fully Deployed to Prod:** 2/13
 - Redhat AI ✓ (completed before journal started)
 - Appstage ✓ (completed before journal started)
 
-**Deployed to Stage:** 4/16
+**Deployed to Stage:** 4/13
 - Firelink ✓ (deployed 2026-03-03)
 - CPT ✓ (deployed 2026-03-03)
 - Snyk ✓ (deployed 2026-03-06)
 - Ibutsu ✓ (deployed 2026-03-06)
 
-**PRs Created, Ready for Release/Deploy:** 12/16
+**PRs Created, Ready for Release/Deploy:** 11/13
 - Visual Qontract ✓ (PR #43)
 - Web-RCA ✓ (PR #43)
 - Snyk ✓ (PR #1)
@@ -85,15 +85,15 @@ Upgrading all backstage plugins to latest versions. Each plugin goes through an 
 - 2026-03-02: Completed Progressive-Delivery plugin upgrade. Rebootstrapped and created PR #30. Note: Ephemeral testing may need additional work for inscope-resources service.
 - 2026-03-02: Completed AI-Search/Convo Frontend plugin upgrade (same plugin, different names). Bootstrapped and tested locally successfully. Cannot test in ephemeral due to missing tangerine backend dependency. Created PR #45.
 - 2026-03-02: Completed Appstage Entity Provider plugin upgrade. Updated local dev environment, tested locally. Skipped ephemeral testing since plugin itself didn't change. Created MR #7.
-- **2026-03-02: ALL 14 PLUGINS COMPLETE! 🎉** Development work finished. Ready to enter deployment phase.
+- **2026-03-02: ALL 13 PLUGINS COMPLETE! 🎉** Development work finished. Ready to enter deployment phase.
 - 2026-03-03: **Started deployment phase.** Created official releases for Firelink and CPT plugins. Deployed both to stage - functioning correctly. Documented follow-up work items for issues identified during testing.
 - 2026-03-05: Started investigating LDAP plugin issue (ENGPROD-9542). LDAP plugin occasionally returns incomplete results, deleting users from Backstage.
-- 2026-03-06: Created official releases for Snyk and Ibutsu plugins. Deployed both to stage - functioning correctly. **Deployment progress: 4 of 14 plugins in stage.**
+- 2026-03-06: Created official releases for Snyk and Ibutsu plugins. Deployed both to stage - functioning correctly. **Deployment progress: 4 of 13 plugins in stage.**
 
 ## Next Steps
 
 **Deployment Pipeline (all development complete!):**
-1. Create official releases for all 14 completed plugins (Visual Qontract, Web-RCA, Snyk, Ibutsu, Openshift, Firelink, CPT, Kafka-Info, Security, Metrics-and-Monitoring, Progressive-Delivery, AI-Search/Convo-Frontend, Appstage-Entity-Provider)
+1. Create official releases for all 13 completed plugins (Visual Qontract, Web-RCA, Snyk, Ibutsu, Openshift, Firelink, CPT, Kafka-Info, Security, Metrics-and-Monitoring, Progressive-Delivery, AI-Search/Convo-Frontend, Appstage-Entity-Provider)
 2. Deploy all completed plugins to stage
 3. Deploy all completed plugins to prod
 

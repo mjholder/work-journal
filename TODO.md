@@ -1,14 +1,22 @@
 # TODO
 
-## Today (2026-03-06)
+## Today (2026-03-12)
 
-- [ ] Create official releases and deploy remaining 10 plugins to stage (Firelink, CPT, Snyk, and Ibutsu already done)
-  - Visual Qontract, Web-RCA, Openshift, Kafka-Info, Security, Metrics-and-Monitoring, Progressive-Delivery, AI-Search/Convo-Frontend, Appstage-Entity-Provider
-- [ ] Investigate openshift plugin 401 auth error
-- [ ] Deploy to prod (after stage complete)
+- [ ] Get RHDH 1.8 working in ephemeral environment
+  - Resolve LDAP plugin config issue (users being read as list instead of object)
+- [ ] Update RHDH version in stage to 1.8 and verify it comes up (after ephemeral success)
+- [ ] Deploy all plugins to prod (after RHDH 1.8 verified in stage)
 
 ## Upcoming
 
+- [ ] Add dependabot to all plugin repositories (needs JIRA card)
+  - Automatically keep dependencies up to date across all 13 plugin repos
+  - Reduce manual dependency management overhead
+  - Improve security posture with automated dependency updates
+- [ ] Automate artifact creation for plugins (needs JIRA card)
+  - Start with appstage plugin
+  - Expand to remaining plugins
+  - Streamline release process and reduce manual steps
 - [ ] Fix LDAP plugin intermittent cataloging issue (ENGPROD-9542)
   - LDAP plugin occasionally returns incomplete results, deleting users from Backstage
   - Users can't sign in when their LDAP entities are missing
@@ -17,10 +25,9 @@
 - [ ] Improve kafka-info plugin UX for "no data" scenarios
   - Currently displays as an error when no metrics match the consumer group
   - Should display as informational "no data available" message instead of error state
-- [ ] Fix openshift plugin proxy config in stage and prod environments
 
 ### Backstage Plugins - All Complete! 🎉
-All 14 plugins have been upgraded and are ready for deployment.
+All 13 plugins have been upgraded and are ready for deployment.
 
 **Note:** IDAP plugin is an upstream plugin and does not need to be upgraded
 
@@ -28,6 +35,9 @@ All 14 plugins have been upgraded and are ready for deployment.
 
 ## Completed
 
+- [x] Investigate openshift plugin 401 auth error - 2026-03-09
+  - Root cause: Backstage now enforces authentication for proxies
+  - Solution: Add `credentials: 'dangerously-allow-unauthenticated'` to app-config.yml since the proxied API doesn't require auth
 - [x] Appstage Entity Provider plugin upgrade - 2026-03-02
   - Rebootstrapped with modern Backstage tooling
   - Updated local dev environment
