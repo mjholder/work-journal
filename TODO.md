@@ -1,13 +1,10 @@
 # TODO
 
-## Today (2026-03-12)
-
-- [ ] Get RHDH 1.8 working in ephemeral environment
-  - Resolve LDAP plugin config issue (users being read as list instead of object)
-- [ ] Update RHDH version in stage to 1.8 and verify it comes up (after ephemeral success)
-- [ ] Deploy all plugins to prod (after RHDH 1.8 verified in stage)
+## Today
 
 ## Upcoming
+
+- [ ] Deploy all plugins to prod (after RHDH 1.9 verified in stage)
 
 - [ ] Add dependabot to all plugin repositories (needs JIRA card)
   - Automatically keep dependencies up to date across all 13 plugin repos
@@ -35,6 +32,26 @@ All 13 plugins have been upgraded and are ready for deployment.
 
 ## Completed
 
+- [x] Investigate why LDAP plugin isn't running the task to grab users in stage inscope - 2026-03-27
+  - Found LDAP plugin config changed after the upgrade
+  - Made small adjustment to fix it
+  - LDAP plugin now working as expected
+- [x] Update RHDH version in stage to 1.9 and verify it comes up - 2026-03-27
+  - Removed 6 plugins that were dropped from RHDH 1.9 image
+  - Ensured LDAP config is in dynamic-plugins.configmap.yml (not app-config.yaml)
+  - RHDH 1.9 is up and running in stage without issues
+- [x] Resolve duplicate API registration bug - 2026-03-27
+  - Root cause: Part of the matomo config was causing the issue
+  - Bug is now fixed
+- [x] Bring back plugins that have been dropped by RHDH - 2026-03-27
+  - Referenced RHDH wrapper repo for implementation
+  - Opened MR: https://gitlab.cee.redhat.com/service/app-interface/-/merge_requests/180470
+  - Tested in ephemeral environment - all plugins came back online successfully
+- [x] Prepare and record 10 minute demo for backstage - 2026-03-26
+- [x] Deploy AppStage Entity Provider Apollo Client 4 migration to stage - 2026-03-17
+  - Apollo Client 4 migration complete with rxjs dependency added
+  - Tested successfully in ephemeral
+  - Released and deployed to stage - ready for RHDH 1.9 upgrade
 - [x] Investigate openshift plugin 401 auth error - 2026-03-09
   - Root cause: Backstage now enforces authentication for proxies
   - Solution: Add `credentials: 'dangerously-allow-unauthenticated'` to app-config.yml since the proxied API doesn't require auth
