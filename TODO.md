@@ -2,7 +2,17 @@
 
 ## Today
 
+## Today
+
+- [ ] Fix clowder bug
+
 ## Upcoming
+
+- [ ] Create JIRA cards for outstanding plugin work
+  - Dependabot for all plugin repositories
+  - Automate artifact creation for plugins
+  - Kafka-info UX improvement for "no data" scenarios
+  - LDAP plugin intermittent cataloging fix (ENGPROD-9542 exists but may need subtasks)
 
 - [ ] Deploy all plugins to prod (after RHDH 1.9 verified in stage)
 
