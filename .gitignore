@@ -5,6 +5,9 @@
 *.swo
 *~
 
+# Obsidian
+.obsidian/
+
 # OS
 .DS_Store
 Thumbs.db

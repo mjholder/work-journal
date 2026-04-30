@@ -1,7 +1,13 @@
+---
+date: {date_iso}
+type: daily
+tags:
+  - daily
+---
 # {date}
 
 ## Tasks for Today
-- [ ]
+- [ ] 
 
 ## Progress
 
@@ -14,3 +20,7 @@
 ## Blockers/Issues
 
 ## Tomorrow's Focus
+
+## Related Notes
+- Projects: 
+- Courses: 

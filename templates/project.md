@@ -1,3 +1,10 @@
+---
+type: project
+status: active
+tags:
+  - project
+created: {date_iso}
+---
 # Project: {project_name}
 
 ## Overview

@@ -1,25 +1,20 @@
 # TODO
 
-## Today
+## Today (2026-04-20)
 
-## Today
-
-- [ ] Fix clowder bug
+- [ ] Setup full CI/CD for ephemeral namespace operator (ENGPROD-9144)
+  - Review clowder operator CI/CD implementation as reference
 
 ## Upcoming
 
 - [ ] Create JIRA cards for outstanding plugin work
-  - Dependabot for all plugin repositories
+  - ~~Dependabot for all plugin repositories (ENGPROD-9781 - done)~~
   - Automate artifact creation for plugins
   - Kafka-info UX improvement for "no data" scenarios
   - LDAP plugin intermittent cataloging fix (ENGPROD-9542 exists but may need subtasks)
 
 - [ ] Deploy all plugins to prod (after RHDH 1.9 verified in stage)
 
-- [ ] Add dependabot to all plugin repositories (needs JIRA card)
-  - Automatically keep dependencies up to date across all 13 plugin repos
-  - Reduce manual dependency management overhead
-  - Improve security posture with automated dependency updates
 - [ ] Automate artifact creation for plugins (needs JIRA card)
   - Start with appstage plugin
   - Expand to remaining plugins
@@ -42,6 +37,8 @@ All 13 plugins have been upgraded and are ready for deployment.
 
 ## Completed
 
+- [x] Add dependabot to all plugin repositories (ENGPROD-9781) - 2026-04-14
+  - Added dependabot configuration across all plugin repos
 - [x] Investigate why LDAP plugin isn't running the task to grab users in stage inscope - 2026-03-27
   - Found LDAP plugin config changed after the upgrade
   - Made small adjustment to fix it
