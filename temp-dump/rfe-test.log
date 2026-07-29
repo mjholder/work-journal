@@ -1,0 +1,148 @@
+2026-06-24T19:06:55.562828Z 00O ␛[0KRunning with gitlab-runner 18.11.1 (5265d41d)␛[0;m
+2026-06-24T19:06:55.562841Z 00O ␛[0K  on itde-alm-runner03-x86-runner-6ffb998db7-bp7sh 8fUsX1yWt, system ID: r_q2Jyeyon6hK7␛[0;m
+2026-06-24T19:06:55.562861Z 00O ␛[0K␛[36;1mResolving secrets␛[0;m␛[0;m
+2026-06-24T19:06:55.562955Z 00O section_start:1782328015:prepare_executor
+2026-06-24T19:06:55.562956Z 00O+␛[0K␛[0K␛[36;1mPreparing the "kubernetes" executor␛[0;m␛[0;m
+2026-06-24T19:06:55.562993Z 00O ␛[0KUsing Kubernetes namespace: itde-alm--pipeline␛[0;m
+2026-06-24T19:06:55.563277Z 00O ␛[0KUsing Kubernetes executor with image quay.io/aipcc/agentic-ci/openshell:0.3.11 ...␛[0;m
+2026-06-24T19:06:55.563280Z 00O ␛[0KUsing attach strategy to execute scripts...␛[0;m
+2026-06-24T19:06:55.563288Z 00O ␛[0KUsing effective pull policy of [IfNotPresent] for container build␛[0;m
+2026-06-24T19:06:55.563292Z 00O ␛[0KUsing effective pull policy of [IfNotPresent] for container helper␛[0;m
+2026-06-24T19:06:55.563294Z 00O ␛[0KUsing effective pull policy of [IfNotPresent] for container init-permissions␛[0;m
+2026-06-24T19:06:55.672396Z 00O section_end:1782328015:prepare_executor
+2026-06-24T19:06:55.672401Z 00O+␛[0Ksection_start:1782328015:prepare_script
+2026-06-24T19:06:55.672566Z 00O+␛[0K␛[0K␛[36;1mPreparing environment␛[0;m␛[0;m
+2026-06-24T19:06:55.735675Z 00O ␛[0KUsing FF_USE_POD_ACTIVE_DEADLINE_SECONDS, the Pod activeDeadlineSeconds will be set to the job timeout: 1h0m0s...␛[0;m
+2026-06-24T19:06:55.823592Z 00E Waiting for pod itde-alm--pipeline/runner-8fusx1ywt-project-244121-concurrent-0-rinxqnfn to be running on the node ip-10-31-105-45.ec2.internal, status is Pending
+2026-06-24T19:06:59.574530Z 01O Running on runner-8fusx1ywt-project-244121-concurrent-0-rinxqnfn via itde-alm-runner03-x86-runner-6ffb998db7-bp7sh...
+2026-06-24T19:06:59.574540Z 01O 
+2026-06-24T19:06:59.574574Z 00O section_end:1782328019:prepare_script
+2026-06-24T19:06:59.574576Z 00O+␛[0Ksection_start:1782328019:get_sources
+2026-06-24T19:06:59.575243Z 00O+␛[0K␛[0K␛[36;1mGetting source from Git repository␛[0;m␛[0;m
+2026-06-24T19:07:00.074128Z 01O ␛[32;1mGitaly correlation ID: 01KVXGEDMJ0F8S1582GZNP3JWY␛[0;m
+2026-06-24T19:07:00.074140Z 01O ␛[32;1mFetching changes with git depth set to 20...␛[0;m
+2026-06-24T19:07:00.074147Z 01O Initialized empty Git repository in /builds/hcm-engprod/rfe-assessor/.git/
+2026-06-24T19:07:00.074154Z 01O ␛[32;1mCreated fresh repository.␛[0;m
+2026-06-24T19:07:00.574597Z 01O ␛[32;1mChecking out b819ba74 as detached HEAD (ref is refs/merge-requests/1/head)...␛[0;m
+2026-06-24T19:07:00.574605Z 01O 
+2026-06-24T19:07:00.574609Z 01O ␛[32;1mSkipping Git submodules setup␛[0;m
+2026-06-24T19:07:00.574613Z 01O 
+2026-06-24T19:07:00.574650Z 00O section_end:1782328020:get_sources
+2026-06-24T19:07:00.574652Z 00O+␛[0Ksection_start:1782328020:step_script
+2026-06-24T19:07:00.575529Z 00O+␛[0K␛[0K␛[36;1mExecuting "step_script" stage of the job script␛[0;m␛[0;m
+2026-06-24T19:07:01.075001Z 01O ␛[32;1m$ : > /etc/subuid # collapsed multi-line command␛[0;m
+2026-06-24T19:07:01.075011Z 01O ␛[32;1m$ pip install .␛[0;m
+2026-06-24T19:07:01.578438Z 01O Processing /builds/hcm-engprod/rfe-assessor
+2026-06-24T19:07:01.578449Z 01O   Installing build dependencies: started
+2026-06-24T19:07:02.576943Z 01O   Installing build dependencies: finished with status 'done'
+2026-06-24T19:07:02.576953Z 01O   Getting requirements to build wheel: started
+2026-06-24T19:07:02.576958Z 01O   Getting requirements to build wheel: finished with status 'done'
+2026-06-24T19:07:02.576964Z 01O   Preparing metadata (pyproject.toml): started
+2026-06-24T19:07:02.576967Z 01O   Preparing metadata (pyproject.toml): finished with status 'done'
+2026-06-24T19:07:02.576972Z 01O Requirement already satisfied: agentic-ci in /usr/local/lib/python3.12/site-packages (from rfe-assessor==0.1.0) (0.3.11)
+2026-06-24T19:07:02.576979Z 01O Requirement already satisfied: pyyaml>=6.0 in /usr/local/lib64/python3.12/site-packages (from agentic-ci->rfe-assessor==0.1.0) (6.0.3)
+2026-06-24T19:07:02.576983Z 01O Requirement already satisfied: opentelemetry-proto>=1.0.0 in /usr/local/lib/python3.12/site-packages (from agentic-ci->rfe-assessor==0.1.0) (1.42.1)
+2026-06-24T19:07:02.576987Z 01O Requirement already satisfied: requests>=2.28 in /usr/local/lib/python3.12/site-packages (from agentic-ci->rfe-assessor==0.1.0) (2.34.2)
+2026-06-24T19:07:02.576993Z 01O Requirement already satisfied: tenacity>=8.0 in /usr/local/lib/python3.12/site-packages (from agentic-ci->rfe-assessor==0.1.0) (9.1.4)
+2026-06-24T19:07:02.576996Z 01O Requirement already satisfied: protobuf<7.0,>=5.0 in /usr/local/lib64/python3.12/site-packages (from opentelemetry-proto>=1.0.0->agentic-ci->rfe-assessor==0.1.0) (6.33.6)
+2026-06-24T19:07:02.577000Z 01O Requirement already satisfied: charset_normalizer<4,>=2 in /usr/local/lib64/python3.12/site-packages (from requests>=2.28->agentic-ci->rfe-assessor==0.1.0) (3.4.7)
+2026-06-24T19:07:02.577004Z 01O Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.12/site-packages (from requests>=2.28->agentic-ci->rfe-assessor==0.1.0) (3.18)
+2026-06-24T19:07:02.577007Z 01O Requirement already satisfied: urllib3<3,>=1.26 in /usr/local/lib/python3.12/site-packages (from requests>=2.28->agentic-ci->rfe-assessor==0.1.0) (2.7.0)
+2026-06-24T19:07:02.577009Z 01O Requirement already satisfied: certifi>=2023.5.7 in /usr/local/lib/python3.12/site-packages (from requests>=2.28->agentic-ci->rfe-assessor==0.1.0) (2026.6.17)
+2026-06-24T19:07:02.577014Z 01O Building wheels for collected packages: rfe-assessor
+2026-06-24T19:07:02.577016Z 01O   Building wheel for rfe-assessor (pyproject.toml): started
+2026-06-24T19:07:03.078414Z 01O   Building wheel for rfe-assessor (pyproject.toml): finished with status 'done'
+2026-06-24T19:07:03.078447Z 01O   Created wheel for rfe-assessor: filename=rfe_assessor-0.1.0-py3-none-any.whl size=6907 sha256=eb318e93c3fdc0bd8f2da849fdea6f0631cb5fc30873ae2e84f264f50a856a4f
+2026-06-24T19:07:03.078452Z 01O   Stored in directory: /root/.cache/pip/wheels/85/7a/fa/2eea8123bcf822b06ac842b7eea44fcc21e13928616db32dcd
+2026-06-24T19:07:03.078458Z 01O Successfully built rfe-assessor
+2026-06-24T19:07:03.078460Z 01O Installing collected packages: rfe-assessor
+2026-06-24T19:07:03.078480Z 01O Successfully installed rfe-assessor-0.1.0
+2026-06-24T19:07:03.078487Z 01O WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+2026-06-24T19:07:03.078491Z 01O ␛[32;1m$ mkdir -p /root/.tokens && echo "${RESULTS_PUSH_TOKEN:-}" > /root/.tokens/results && unset RESULTS_PUSH_TOKEN␛[0;m
+2026-06-24T19:07:03.078495Z 01O ␛[32;1m$ if [ -n "${RESULTS_REPO:-}" ]; then RESULTS_PUSH_TOKEN="$(cat /root/.tokens/results)" bash scripts/clone-data-repo.sh "$RESULTS_REPO" assessments; fi␛[0;m
+2026-06-24T19:07:03.078500Z 01O Cloning into 'assessments'...
+2026-06-24T19:07:04.080561Z 01O Data repo cloned to assessments
+2026-06-24T19:07:04.080569Z 01O ␛[32;1m$ chmod -R a+rwX "$CI_PROJECT_DIR"␛[0;m
+2026-06-24T19:07:04.080573Z 01O ␛[32;1m$ rfe-assessor "$CLAUDE_PROMPT"␛[0;m
+2026-06-24T19:07:04.578491Z 01O --- Backend: openshell | Workdir: /builds/hcm-engprod/rfe-assessor ---
+2026-06-24T19:07:04.578505Z 01O   Image: quay.io/aipcc/agentic-ci/claude-sandbox:0.3.11
+2026-06-24T19:07:04.578509Z 01O   Model: claude-opus-4-6 (from default)
+2026-06-24T19:07:04.578514Z 01O --- Starting OTEL collector ---
+2026-06-24T19:07:04.578517Z 01O   exec: openshell status
+2026-06-24T19:07:04.578520Z 01O ▶ Starting OpenShell gateway
+2026-06-24T19:07:12.087495Z 01O   exec: openshell-gateway generate-certs --output-dir /root/.local/state/openshell/tls --server-san host.openshell.internal
+2026-06-24T19:07:12.087510Z 01O ␛[2m2026-06-24T19:07:11.709632Z␛[0m ␛[32m INFO␛[0m ␛[2mopenshell_server::certgen␛[0m␛[2m:␛[0m PKI files created. ␛[3mdir␛[0m␛[2m=␛[0m/root/.local/state/openshell/tls
+2026-06-24T19:07:12.087515Z 01O   Supervisor image: quay.io/mprpic/openshell-supervisor:pr1763
+2026-06-24T19:07:12.087533Z 01O   exec: openshell gateway add https://localhost:17670 --local --name ci
+2026-06-24T19:07:12.087542Z 01O ␛[1m␛[33m⚠␛[39m␛[0m Gateway is not reachable at https://localhost:17670. Verify the gateway is running.
+2026-06-24T19:07:12.087546Z 01O ␛[1m␛[32m✓␛[39m␛[0m Gateway 'ci' added and set as active
+2026-06-24T19:07:12.087551Z 01O   ␛[2mEndpoint:␛[0m https://localhost:17670
+2026-06-24T19:07:12.087554Z 01O   ␛[2mType:␛[0m local
+2026-06-24T19:07:12.087557Z 01O ␛[1m␛[32m✓␛[39m␛[0m TLS certificates present
+2026-06-24T19:07:12.087561Z 01O   exec: openshell status
+2026-06-24T19:07:14.089727Z 01O   exec: openshell status
+2026-06-24T19:07:16.091987Z 01O   exec: openshell status
+2026-06-24T19:07:18.094050Z 01O   exec: openshell status
+2026-06-24T19:07:20.110451Z 01O   exec: openshell status
+2026-06-24T19:07:22.098326Z 01O   exec: openshell status
+2026-06-24T19:07:24.100518Z 01O   exec: openshell status
+2026-06-24T19:07:26.102491Z 01O   exec: openshell status
+2026-06-24T19:07:28.104519Z 01O   exec: openshell status
+2026-06-24T19:07:30.106322Z 01O   exec: openshell status
+2026-06-24T19:07:32.108690Z 01O   exec: openshell status
+2026-06-24T19:07:34.110500Z 01O   exec: openshell status
+2026-06-24T19:07:36.118397Z 01O   exec: openshell status
+2026-06-24T19:07:38.120454Z 01O   exec: openshell status
+2026-06-24T19:07:40.119931Z 01O   exec: openshell status
+2026-06-24T19:07:42.120737Z 01O   exec: openshell status
+2026-06-24T19:07:44.124821Z 01O   exec: openshell status
+2026-06-24T19:07:46.125108Z 01O   exec: openshell status
+2026-06-24T19:07:48.127993Z 01O   exec: openshell status
+2026-06-24T19:07:50.131416Z 01O   exec: openshell status
+2026-06-24T19:07:52.132679Z 01O   exec: openshell status
+2026-06-24T19:07:54.136192Z 01O   exec: openshell status
+2026-06-24T19:07:56.135532Z 01O   exec: openshell status
+2026-06-24T19:07:58.138508Z 01O   exec: openshell status
+2026-06-24T19:08:00.140498Z 01O   exec: openshell status
+2026-06-24T19:08:02.142346Z 01O   exec: openshell status
+2026-06-24T19:08:04.145013Z 01O   exec: openshell status
+2026-06-24T19:08:06.147230Z 01O   exec: openshell status
+2026-06-24T19:08:08.149345Z 01O   exec: openshell status
+2026-06-24T19:08:10.151888Z 01O   exec: openshell status
+2026-06-24T19:08:12.157318Z 01O   exec: openshell gateway remove ci
+2026-06-24T19:08:12.157330Z 01O   exec: openshell status
+2026-06-24T19:08:12.157336Z 01O ▶ No sandbox to stop
+2026-06-24T19:08:12.157344Z 01O   exec: openshell gateway remove ci
+2026-06-24T19:08:12.157348Z 01O   gateway remove: Error:   × No gateway metadata found for 'ci'.
+2026-06-24T19:08:12.157354Z 01O   │ List available gateways: openshell gateway select
+2026-06-24T19:08:12.157361Z 01O ▶ Gateway stopped
+2026-06-24T19:08:12.157364Z 01O Traceback (most recent call last):
+2026-06-24T19:08:12.157368Z 01O   File "/usr/local/bin/rfe-assessor", line 8, in <module>
+2026-06-24T19:08:12.157376Z 01O     sys.exit(main())
+2026-06-24T19:08:12.157379Z 01O              ^^^^^^
+2026-06-24T19:08:12.157384Z 01O   File "/usr/local/lib/python3.12/site-packages/rfe_assessor/cli.py", line 98, in main
+2026-06-24T19:08:12.157390Z 01O     return run_assessment(
+2026-06-24T19:08:12.157393Z 01O            ^^^^^^^^^^^^^^^
+2026-06-24T19:08:12.157397Z 01O   File "/usr/local/lib/python3.12/site-packages/rfe_assessor/runner.py", line 219, in run_assessment
+2026-06-24T19:08:12.157406Z 01O     backend.setup(otel_port=otel_port)
+2026-06-24T19:08:12.157411Z 01O   File "/usr/local/lib/python3.12/site-packages/agentic_ci/backends/openshell/__init__.py", line 105, in setup
+2026-06-24T19:08:12.157416Z 01O     gateway.start()
+2026-06-24T19:08:12.157427Z 01O   File "/usr/local/lib/python3.12/site-packages/agentic_ci/backends/openshell/gateway.py", line 102, in start
+2026-06-24T19:08:12.157436Z 01O     raise RuntimeError("Gateway did not become healthy within 60s")
+2026-06-24T19:08:12.157442Z 01O RuntimeError: Gateway did not become healthy within 60s
+2026-06-24T19:08:12.157451Z 01O 
+2026-06-24T19:08:12.771483Z 00O section_end:1782328092:step_script
+2026-06-24T19:08:12.771489Z 00O+␛[0Ksection_start:1782328092:upload_artifacts_on_failure
+2026-06-24T19:08:12.772080Z 00O+␛[0K␛[0K␛[36;1mUploading artifacts for failed job␛[0;m␛[0;m
+2026-06-24T19:08:13.155366Z 01O ␛[32;1mUploading artifacts...␛[0;m
+2026-06-24T19:08:13.155378Z 01O ␛[0;33mWARNING: claude-otel.jsonl: no matching files. Ensure that the artifact path is relative to the working directory (/builds/hcm-engprod/rfe-assessor)␛[0;m 
+2026-06-24T19:08:13.155383Z 01O ␛[31;1mERROR: No files to upload                         ␛[0;m 
+2026-06-24T19:08:13.155385Z 01O 
+2026-06-24T19:08:13.155413Z 00O section_end:1782328093:upload_artifacts_on_failure
+2026-06-24T19:08:13.155414Z 00O+␛[0Ksection_start:1782328093:cleanup_file_variables
+2026-06-24T19:08:13.155513Z 00O+␛[0K␛[0K␛[36;1mCleaning up project directory and file based variables␛[0;m␛[0;m
+2026-06-24T19:08:13.655879Z 01O 
+2026-06-24T19:08:13.655915Z 00O section_end:1782328093:cleanup_file_variables
+2026-06-24T19:08:13.655916Z 00O+␛[0K
+2026-06-24T19:08:13.673947Z 00O ␛[31;1mERROR: Job failed: command terminated with exit code 1␛[0;m
+

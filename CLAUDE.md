@@ -25,7 +25,7 @@ All vault file operations go through the `obsidian` MCP server (`@bitbonsai/mcpv
 ### Templates
 
 All templates include YAML frontmatter (`date`, `type`, `tags`, etc.):
-- `templates/daily.md` — Daily entry with tasks, progress, notes, blockers, tomorrow's focus, and related notes
+- `templates/daily.md` — Daily entry with drawing prompt, todos, log, review, and related notes
 - `templates/project.md` — Project summary with overview, status, progress, and tasks
 - `templates/course.md` — Course learning with progress and link in frontmatter
 
@@ -76,6 +76,8 @@ All new files include YAML frontmatter:
 2. Use `/webby:todo add "task"` to add tasks throughout the day
 3. Use `/webby:session-log "progress"` to capture work done
 4. Use `/webby:standup` before standup to get a recap
+
+**Drawing prompt**: Every new daily entry must include an AI-generated drawing prompt in the `#### Drawing Prompt` section at the top. Generate a fresh prompt each time — mix styles across days (simple objects, creative/imaginative, observational/mindful). Keep prompts short (1-2 sentences), inviting, and low-pressure.
 
 ### Project Summary Workflow
 

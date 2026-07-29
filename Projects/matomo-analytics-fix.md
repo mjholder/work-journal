@@ -12,9 +12,9 @@ After the backstage upgrade (RHDH 1.9), the matomo analytics plugin stopped trac
 
 ## Current Status
 
-**Upstream PR updated — migrating plugin to New Frontend System (NFS).**
+**Blocked (2026-05-26):** Local e2e test passing with v1.28.2 + overlay, but RHDH is on Backstage 1.49.x and the plugin targets Backstage 1.50.x. Can't proceed with the overlay PR until the version gap is resolved.
 
-Initial PR added auto-registration of the API factory via `apis: [MatomoAnalyticsApi]`. Community plugin maintainers reviewed and asked us to instead migrate the plugin to the New Frontend System, following the Segment analytics provider PR (#5286) as a pattern. The branch has been reworked to use `createFrontendPlugin` + `AnalyticsImplementationBlueprint` instead of the legacy auto-registration approach. The overlay approach (rhdh-plugin-export-overlays) may no longer be needed once the NFS migration lands — RHDH should be able to use the plugin's `/alpha` export directly.
+Upstream PR #8566 merged, v1.28.2 published to npm with NFS migration. Local testing confirmed the overlay is still required — the NFS migration added `createPlugin({apis: [MatomoAnalyticsApi]})` which auto-registers the analytics API when the module loads, causing "duplicate or forbidden API factory" errors if scalprum also tries to register via `apiFactories` or `analyticsApiExtensions` config. The overlay isolates the export to just `matomoAnalyticsApi` (the factory alone), avoiding the conflict. Matomo tracking events are now flowing from a local RHDH instance to a local Matomo server.
 
 ## Root Cause Analysis
 
@@ -109,10 +109,15 @@ Changed approach from auto-registration to full NFS migration per maintainer fee
 
 ## Outstanding Tasks
 
-- [ ] Push updated branch and update upstream PR
-- [ ] Get maintainer approval on NFS migration approach
-- [ ] Once merged, verify RHDH can consume the `/alpha` export for NFS
-- [ ] If RHDH uses NFS: no overlay needed; if still legacy: create overlay PR for rhdh-plugin-export-overlays
+- [x] Push updated branch and update upstream PR
+- [x] Get maintainer approval on NFS migration approach
+- [x] Once merged, verify RHDH can consume the `/alpha` export for NFS
+- [x] Upstream PR #8566 merged, v1.28.2 published to npm (2026-05-12)
+- [x] Verified locally: `rhdh-cli plugin export` produces valid scalprum assets without overlay
+- [x] Local e2e test: RHDH loads the plugin from locally-built dist-dynamic (podman-compose setup at `workspaces/analytics/local-e2e/`)
+- [x] Confirmed overlay IS still needed — NFS `createPlugin({apis: [...]})` conflicts with scalprum registration (duplicate/forbidden API factory)
+- [x] Rebuilt plugin with overlay (`scalprum-config.json` → `apiFactory.ts`), confirmed matomo tracking works end-to-end locally
+- [ ] Create PR in rhdh-plugin-export-overlays: update source.json (repo-ref to include v1.28.2), update metadata (role: frontend-plugin, version: 1.28.2), keep overlay (apiFactory.ts + scalprum-config.json + app-config.dynamic.yaml)
 - [ ] Update app-interface stage config to test
 - [ ] Deploy to prod once verified in stage
 
@@ -130,3 +135,26 @@ Changed approach from auto-registration to full NFS migration per maintainer fee
 - The old `dynamicPlugins.frontend` config with `janus-idp.backstage-plugin-analytics-module-matomo` was removed during earlier debugging. It can't be re-added because the plugin name changed, and adding it with the old name causes duplicate API registration errors.
 - The correct scalprum plugin name is `backstage-community.plugin-analytics-module-matomo` (from `dist-scalprum/plugin-manifest.json`)
 - The OCI package was extracted and inspected at `/tmp/matomo-plugin-inspect/extracted/` during the investigation
+
+### NFS Migration Discovery (2026-05-12)
+
+**The overlay is still required even after the NFS migration.** Key findings:
+
+1. **NFS `createPlugin({apis: [MatomoAnalyticsApi]})` causes conflicts:** When scalprum loads the PluginRoot module that includes this call, the analytics API factory gets registered automatically. Any additional config-driven registration (`apiFactories` or `analyticsApiExtensions`) is a duplicate → "duplicate or forbidden API factory" error.
+
+2. **Segment plugin works differently:** The segment plugin's `createPlugin()` does NOT include `apis: [...]`, so `analyticsApiExtensions` config works without conflict. Matomo's NFS migration included `apis: [MatomoAnalyticsApi]` in the legacy `createPlugin` for backward compatibility.
+
+3. **Without any config:** The plugin loads (scalprum serves the JS) but the API factory is not actually activated by the RHDH analytics framework — no tracking occurs. The `createPlugin({apis: [...]})` creates the plugin object but RHDH doesn't install it into the app automatically.
+
+4. **Solution: overlay isolates the export.** The `scalprum-config.json` points PluginRoot to `./src/apiFactory.ts` which only exports `matomoAnalyticsApi` (the `createApiFactory` result). No `createPlugin` in scope = no conflict. Then `apiFactories: [{importName: matomoAnalyticsApi}]` config registers it cleanly.
+
+5. **Matomo `host` config must NOT include protocol.** The plugin prepends `//` to make it protocol-relative. Setting `host: http://localhost:8080` produces `//http://localhost:8080/matomo.js` (malformed). Correct: `host: localhost:8080`.
+
+### Local E2E Test Environment
+
+Podman-compose setup at `rhdh-plugin-export-overlays/workspaces/analytics/local-e2e/`:
+- **MariaDB** (mariadb:11) — Matomo database
+- **Matomo** (matomo:5-apache) — Analytics server at `localhost:8080`
+- **RHDH** (rhdh:next) — Developer Hub at `localhost:7007` with matomo plugin mounted from locally-built `dist-dynamic/`
+
+Plugin built with: `npx @red-hat-developer-hub/cli@1.10.6 plugin export --no-install --scalprum-config <overlay-scalprum-config.json>` after copying `overlay/src/apiFactory.ts` into the upstream source.

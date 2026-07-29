@@ -1,0 +1,49 @@
+Gitlab Runners🔗
+Field 	Information
+Document Type 	reference
+
+This section covers the Gitlab runners available for the rhel-ai and ai groups under gitlab.com.
+Runners in AWS🔗
+
+These are defined in aipcc-infrastructure repo and deployed manually. The runners use the docker-machine executor which spawns on-demand EC2 worker instances to run CI/CD jobs.
+
+Warning
+
+Despite best efforts, these docs are likely to be outdated, please check the configuration in the aipcc-infrastructure repo for accurate information on what's currently deployed.
+
+There are two sets of runners, referred to as "rhel-ai" and "ai" runners:
+
+    "rhel-ai" runners (aipcc-*) -- registered as group runners for the redhat/rhel-ai group. Deployed in us-east-1 and us-east-2.
+    "ai" runners (aipcc-ai-*) -- registered as group runners for the redhat/ai group. Deployed in us-east-1 only.
+
+Both sets use the same tags and identical instance types -- the only difference is which GitLab group they serve. Concurrency is 20 for "rhel-ai" runners and 10 for "ai" runners (per region).
+x86_64 runners🔗
+Tag 	Worker Instance Type 	vCPU 	Memory (GB) 	Root Volume (GB)
+aipcc 	t3.medium 	2 	4 	100
+aipcc-small-x86_64 	m7i-flex.xlarge 	4 	16 	300
+aipcc-large-x86_64 	m7i-flex.12xlarge 	48 	192 	300
+
+The aipcc runner is meant for small workloads that can't be run on the Kubernetes runner. For lightweight tasks like building docs or running linters, prefer the aipcc-k8s-cicd tag instead.
+
+The rest of the runners are mainly for wheels building and other heavier workloads requiring more CPU and memory.
+aarch64 runners🔗
+Tag 	Worker Instance Type 	vCPU 	Memory (GB) 	Root Volume (GB)
+aipcc-small-aarch64 	m7g.xlarge 	4 	16 	100
+aipcc-large-aarch64 	r7g.12xlarge 	48 	384 	300
+Deployment🔗
+
+See the aipcc-infrastructure repo README for Makefile targets and deployment instructions.
+Kubernetes Runner🔗
+
+There is also a Kubernetes-based runner defined in the k8s-gitlab-runner repo, deployed on the ITUP OpenShift platform.
+Tag 	Executor 	CPU Limit 	Memory Limit 	Concurrency
+aipcc-k8s-cicd 	kubernetes 	1 	2Gi 	100
+
+This runner is suitable for lightweight CI/CD tasks that don't require specific architectures or large compute resources. It runs on OpenShift in the aipcc-gitlab-runner--pipeline namespace and is deployed via Kustomize.
+
+It's deployed in two clusters for high availability:
+
+    Preprod: preprod-stable-spoke1-dc-iad2.itup.redhat.com
+    Prod: prod-scale-spoke1-aws-us-east-1.itup.redhat.com
+
+Each cluster runs two runner instances -- one for gitlab.com and one for gitlab.cee.redhat.com.

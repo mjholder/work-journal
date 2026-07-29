@@ -1,26 +1,23 @@
 ---
-date: {date_iso}
+date:
+  date_iso: null
 type: daily
 tags:
   - daily
 ---
 # {date}
 
-## Tasks for Today
+#### Drawing Prompt
+> _Generate a fresh prompt here when creating the day's entry_
+
+#### To Dos
 - [ ] 
 
-## Progress
+#### Log
 
-### Project:
+#### A day in review
 
-### Course Work:
-
-## Notes
-
-## Blockers/Issues
-
-## Tomorrow's Focus
-
-## Related Notes
+#### Related Notes
 - Projects: 
-- Courses: 
+- Meetings: 
+- Learning: 

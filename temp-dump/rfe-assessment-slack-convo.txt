@@ -1,0 +1,34 @@
+Folks, just a head up this is regarding the org pulse related stuff. Before Bill left of his PTO, he requested me to check what can be  shortest path towards the RFE grading report enabled for OpenShift RFE project. Thanks Matt for spending time on this and  prioritizing this work
+
+I had a couple of meetings with Matt and Eliad and also did some research on this.
+The report has a categories of components
+
+RFE Created/Reviewed using  AI 
+Score Distribution  and Crieteria  Performance.
+
+
+We all have put some time and effort to find out a path.
+For 1.  We have discovered that RFE Created/Reviewed using  AI  is not going to be possible as none of the RFE is created using the AI skills which this project is using. The text in those could have been created/vetted by  AI but there is no label on them so this one is a change in process of RFE creation and could not be accelerated.
+
+For 2. I dug out the way to reach it and Pratik helped us to reach to the final goal post today.
+
+Attaching the data in csv format and an HTML file graded for report , the Cluade skill to reach and the goal and the architecture diagram on how its implemented by RHAI team which we can modify and adopt.
+
+I am hoping this quick html file could be a good workaround for your meeting tomorrow Bill while Matt can continue to research on how to accelerate it and get it on the dashboard he is working under https://redhat.atlassian.net/browse/ENGPROD-10017
+
+Please let me know if you have any questions or need more info.
+
+Thanks Tony. It seems like what we can say for tomorrow's exec update is:
+
+we have Org Pulse deployed in Stage
+we're focusing on RFE scoring as a primary use case
+we've done a manual run of the RFE scoring agent and have some preliminary results, not yet integrated in the dashboard
+
+
+is that about right? (edited)
+
+Org Pulse deployment is in progress - 50% of Work is done - https://redhat.atlassian.net/browse/ENGPROD-10017  (3/6 Epics are done) (edited) 
+:jira: ENGPROD-10017 [In Progress] : Deploy RHAI Org Pulse infrastructure for Hybrid Platforms — build pipeline, OpenShift provisioning, credentials, and production deploymentAdded by assisted-installer-jira-unfurler[12:50 PM]These 2 are 100% correct  :
+
+we're focusing on RFE scoring as a primary use case
+we've done a manual run of the RFE scoring agent and have some preliminary results, not yet integrated in the dashboard

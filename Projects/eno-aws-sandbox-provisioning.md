@@ -25,7 +25,7 @@ This project file serves as the central knowledge hub for tracking progress acro
 
 ## Current Status
 
-🟡 Planning / Requirements Gathering
+🟡 Planning / Requirements Gathering — waiting on Babylon team (ghosted since ~2026-05-11, need to follow up)
 
 ## Recent Progress
 
@@ -35,6 +35,7 @@ This project file serves as the central knowledge hub for tracking progress acro
 - 2026-04-22: Identified key stakeholders (@mamorim, @Johnathan Kupferer, @gucore)
 - 2026-04-24: Completed deep exploration of babylon CLI (PR #3210). Discovered the CLI creates ResourceClaims via Catalog API rather than calling Sandbox API directly. Documented full provisioning chain: ResourceClaim → Poolboy → AnarchySubject → Anarchy → AWX → AgnosticD → AWS. Updated project doc with ResourceClaim construction patterns, comparison matrix, and recommendation that ENO create ResourceClaims directly via K8s API following babylon CLI's OrderService() patterns. This approach reuses all Babylon infrastructure (cost tracking, lifecycle, chargeback) and avoids auth complexity.
 - 2026-04-24 (continued): Discovered critical architectural constraint: **ResourceClaims must be created on the Babylon cluster** (where Poolboy/Anarchy operators run), not on the ephemeral cluster where ENO runs. This means ENO cannot use simple in-cluster K8s API access. Investigated babylon CLI authentication flow - it uses pure HTTP client with OAuth browser flow. **Decision: Build custom HTTP client for ENO** similar to babylon CLI's approach but with service account token authentication instead of browser OAuth. This allows ENO (running on ephemeral cluster) to create ResourceClaims on remote Babylon cluster via Catalog API. Full lifecycle (provision, monitor, modify, delete) happens via HTTP operations (POST/GET/PATCH/DELETE on ResourceClaim endpoints). Babylon CLI code serves as reference implementation, not used as binary.
+- 2026-05-11: Reviewed Brandon's ROSA cluster integration across ENO and bonfire. Documented finalizer lifecycle hook, graceful CRD degradation, requeue-until-clean, and "deleting" state patterns. Mapped each pattern to sandbox provisioning. Clarified ENO's role as coordination layer (not lifecycle manager): ENO initiates provisioning, reports status, syncs TTL to Babylon (defense-in-depth), and coordinates cleanup. Decision: sync TTL to Babylon via lifespan.end on create + PATCH on extension. Identified key gaps: cross-cluster HTTP vs. local K8s API, credential type differences, need for deprovisioning timeout.
 
 ## Outstanding Tasks
 
@@ -46,8 +47,8 @@ This project file serves as the central knowledge hub for tracking progress acro
 - [ ] Get alignment with @mamorim on operational reporting needs
 - [ ] Validate approach with @Johnathan Kupferer and @gucore
 - [ ] Ask @gurnben what manual tests were run locally
-- [ ] Review Brandon's ROSA integration pattern in bonfire
-- [ ] Determine integration pattern to follow for sandbox provisioning (leaning toward ResourceClaim pattern)
+- [x] Review Brandon's ROSA integration pattern in bonfire
+- [x] Determine integration pattern to follow for sandbox provisioning — coordination layer pattern matching ROSA: finalizer-based cleanup, async provisioning, TTL sync to Babylon
 
 ### Prerequisites (dependent on architecture choice)
 
@@ -266,14 +267,124 @@ ENO should **build a custom HTTP REST client** (similar to babylon CLI's client)
 
 ### Reference Implementations
 
-**Brandon's ROSA Integration:**
-- Bonfire can stand up ROSA clusters
-- This could serve as a pattern for how to integrate external service provisioning
-- Need to review implementation details for integration approach
+#### Brandon's ROSA Cluster Integration (Reviewed 2026-05-11)
 
-**Gurney's Local Testing:**
+Brandon added ROSA cluster provisioning across ENO and bonfire without creating new CRDs. The implementation is a strong reference for how sandbox provisioning should work.
+
+**ENO side — finalizer-based lifecycle hook:**
+
+Source files:
+- `controllers/cloud.redhat.com/helpers/capi.go` — CAPI resource cleanup helpers (`DeleteCAPIResources`, `RemoveStuckROSAMachinePoolFinalizers`)
+- `controllers/cloud.redhat.com/namespacereservation_controller.go` — controller integration (`handleCAPICleanup`, `capiCleanupFinalizer`)
+- `controllers/cloud.redhat.com/run.go` — scheme registration (`clusterv1.AddToScheme`)
+- `apis/cloud.redhat.com/v1alpha1/namespacepool_types.go` — optional ClowdEnvironment (pointer with `omitempty`)
+- `apis/cloud.redhat.com/v1alpha1/namespacereservation_types.go` — `SecretSourceNamespace` field
+
+Key commits (oldest first):
+- `ca39205` — Non-Clowder pools, configurable secret source namespace
+- `93d8faf` — CAPI cleanup finalizer (initial feature)
+- `883ba4d` — RBAC permissions for `cluster.x-k8s.io/clusters` and `infrastructure.cluster.x-k8s.io/rosamachinepools`
+- `63e9597` — Remove timeout, add "deleting" state
+- `8eed685`, `01df94b` — Stuck finalizer handling for ROSAMachinePool
+
+Pattern summary:
+1. **Finalizer added at activation** — `capiCleanupFinalizer` added to NamespaceReservation when state becomes "active"
+2. **Deletion triggers cleanup** — when `DeletionTimestamp` set, `handleCAPICleanup()` runs instead of normal reconciliation
+3. **Cleanup orchestration** — sets status to "deleting", calls `DeleteCAPIResources()` (lists and deletes Cluster CRDs), calls `RemoveStuckROSAMachinePoolFinalizers()` for stuck resources
+4. **Requeue-until-clean** — if CAPI resources remain, requeue after 10 seconds. No timeout; waits indefinitely
+5. **Finalizer removed only when clean** — once all resources gone, finalizer removed and K8s can proceed with deletion
+6. **Graceful CRD degradation** — `DeleteCAPIResources()` uses `apimeta.IsNoMatchError()` to silently return when Cluster CRD not installed. Non-ROSA pools never block
+
+Critical insight: **ENO does NOT manage ROSA lifecycle** — CAPI controllers do. ENO just coordinates cleanup timing.
+
+**Bonfire side — parallel resource type:**
+
+Brandon added a complete parallel resource model for clusters alongside namespaces:
+- `bonfire_lib/clusters.py` — `reserve_cluster()`, `release_cluster()`, `extend_cluster()`, `get_cluster_status()`, `get_kubeconfig()`
+- `bonfire_lib/k8s_client.py` — 6 new DynamicClient methods for ClusterReservation/ClusterPool CRDs
+- `bonfire_mcp/server.py` — 8 existing tools made polymorphic on resource type (namespace vs cluster), plus new `ephemeral_get_kubeconfig`
+- Jinja2 template for ClusterReservation CR construction
+- Async model: `reserve_cluster()` returns immediately, caller polls `get_cluster_status()` (contrast with namespace sync model)
+- Default 4h duration (vs 1h for namespaces), `rosa-default` pool
+
+#### Gurney's Local Testing
+
 - Ran manual tests locally (need details on what was tested)
 - Validation approach could inform testing strategy
+
+#### ENO's Role: Coordination Layer (Not Lifecycle Manager)
+
+Both ROSA and sandbox follow the same principle — ENO coordinates with external systems, it doesn't replace them:
+
+| Aspect | ROSA | Sandbox |
+|--------|------|---------|
+| **Who manages lifecycle** | CAPI controllers | Babylon (Poolboy, Anarchy, AWX) |
+| **ENO initiates** | Finalizer ensures cleanup | HTTP POST ResourceClaim to Catalog API |
+| **ENO monitors** | Lists Cluster CRDs to check if gone | HTTP GET ResourceClaim, reads `status.summary.provision_state` |
+| **ENO syncs TTL** | N/A (CAPI doesn't have TTL concept) | Sets `spec.lifespan.end` on create, PATCHes on extension |
+| **ENO cleans up** | Deletes Cluster CR, waits for CAPI | HTTP DELETE ResourceClaim, waits for Babylon teardown |
+| **ENO reports** | "deleting" state during cleanup | "provisioning", "active", "deprovisioning" states |
+
+**TTL Sync Decision (2026-05-11):** Sync TTL to Babylon via `spec.lifespan.end`. On create, set `lifespan.end` to match reservation expiration. On extension, PATCH the ResourceClaim's `lifespan.end`. This provides defense-in-depth: even if ENO fails to DELETE, Babylon will auto-expire the sandbox.
+
+#### Patterns Applicable to AWS Sandbox Provisioning
+
+The ROSA implementation establishes patterns that map directly to sandbox work:
+
+**1. Finalizer-based cleanup (CRITICAL)**
+
+ROSA: `capiCleanupFinalizer` on NamespaceReservation ensures `DeleteCAPIResources()` runs before namespace is garbage-collected.
+
+Sandbox: Add a `sandbox-cleanup.cloud.redhat.com` finalizer at activation. The finalizer handler must HTTP DELETE the ResourceClaim on the Babylon cluster via Catalog API before removing the finalizer.
+
+```
+Reservation deleted → DeletionTimestamp set → handleSandboxCleanup()
+  → HTTP DELETE /apis/.../resourceclaims/{name} to Catalog API
+  → Poll until ResourceClaim is gone (or handle 404 as success)
+  → Remove finalizer → K8s proceeds with namespace deletion
+```
+
+**2. Requeue-until-clean**
+
+ROSA: 10-second requeue loop, no timeout.
+
+Sandbox: Same pattern for deprovisioning. HTTP DELETE accepted, but actual AWS cleanup (AWX, AgnosticD teardown) takes minutes. Requeue on 15-30s intervals, GET the ResourceClaim to check if still exists. Remove finalizer only after 404 or confirmed deletion.
+
+**3. Graceful degradation**
+
+ROSA: `IsNoMatchError()` means pools without CAPI CRD never block.
+
+Sandbox: If Catalog API is unreachable (network error, 5xx), log + requeue with backoff. If sandbox provisioning was never started (no ResourceClaim name in status), skip cleanup entirely — same concept as the `namespace == ""` early return in `handleCAPICleanup`.
+
+**4. State tracking**
+
+ROSA: Added "deleting" state for observability during cleanup.
+
+Sandbox: Add "provisioning" (after HTTP POST, waiting for AWX), "active" (sandbox ready), "deprovisioning" (after HTTP DELETE, waiting for teardown). Map to ResourceClaim `provision_state`: new/provisioning/started/provision-failed.
+
+**5. Async provisioning model**
+
+ROSA (bonfire): `reserve_cluster()` returns immediately; caller polls `get_cluster_status()`.
+
+Sandbox: Same pattern needed. `reserve_sandbox()` fires HTTP POST and returns. Caller polls `get_sandbox_status()` which does HTTP GET on ResourceClaim and maps `status.summary.provision_state` to user-facing states.
+
+**6. Polymorphic tooling**
+
+ROSA (bonfire MCP): Existing tools made polymorphic — check `resource_type` parameter and dispatch to namespace or cluster functions.
+
+Sandbox: MCP tools should handle sandbox-backed environments as a third resource type. `ephemeral_reserve` accepts `resource_type: sandbox`, new `ephemeral_get_sandbox_credentials` tool returns AWS access keys from ResourceClaim status.
+
+#### Gaps: ROSA vs. Sandbox
+
+| Aspect | ROSA | Sandbox | Implication |
+|--------|------|---------|-------------|
+| Resource location | In-cluster CAPI CRDs | Cross-cluster ResourceClaims via HTTP | ENO needs HTTP client, not just K8s client |
+| Cleanup mechanism | K8s API Delete on local Cluster CR | HTTP DELETE to remote Catalog API | Must handle network failures, auth expiry |
+| Credential type | kubeconfig Secret in namespace | AWS access keys from ResourceClaim status | Different credential extraction and injection |
+| Stuck resources | Remove stuck finalizers from local CRs | Cannot manipulate remote Babylon resources | Must rely on Catalog API / Babylon operators |
+| CRD availability | `IsNoMatchError` on local CRD | HTTP connectivity check to Catalog API | Health check is network-level, not schema-level |
+| Timeout | No timeout (waits indefinitely) | Should have timeout — orphaned accounts cost money | Add configurable timeout with alert/metric |
+| TTL management | N/A | Sync `lifespan.end` + DELETE on expiry | Defense-in-depth: Babylon auto-expires even if ENO fails |
 
 ### Key Stakeholders
 - **@mamorim** - Cost allocation, operational reporting concerns
@@ -695,5 +806,5 @@ func (r *EphemeralNamespaceReconciler) cleanupSandbox(ctx context.Context, ns *E
 - How can we replicate local testing for development/validation?
 
 **Reference Implementations:**
-- Brandon's work on bonfire standing up ROSA clusters - can this pattern be followed?
-- What integration patterns exist in bonfire for external service provisioning?
+- [x] Brandon's work on bonfire standing up ROSA clusters — reviewed, patterns documented above in Reference Implementations section
+- [x] What integration patterns exist in bonfire for external service provisioning? — polymorphic resource type pattern, async reserve model, documented above
