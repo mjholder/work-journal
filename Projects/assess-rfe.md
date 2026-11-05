@@ -65,6 +65,12 @@ For our setup, pipeline runs on `itup-alm-x86` runners behind VPN. Direct connec
 - **This story:** [ENGPROD-10098](https://redhat.atlassian.net/browse/ENGPROD-10098) — Add `--jql` flag to assess-rfe (upstream contribution)
 - **Related:** [ENGPROD-10099](https://redhat.atlassian.net/browse/ENGPROD-10099) — Parameterize rfe-assessor pipeline
 
+### Pipeline Hardening (2026-10-08)
+
+- **Epic:** [ENGPROD-10422](https://redhat.atlassian.net/browse/ENGPROD-10422) — Harden the RFE assessor pipeline and alert on failures (under initiative [PLATENG-179](https://redhat.atlassian.net/browse/PLATENG-179))
+- [ENGPROD-10423](https://redhat.atlassian.net/browse/ENGPROD-10423) — Fail the org-pulse relay on upload and configuration errors
+- [ENGPROD-10424](https://redhat.atlassian.net/browse/ENGPROD-10424) — Report assess-rfe pipeline failures to the team Slack alert channel
+
 ## Current Priorities (2026-06-23)
 
 ### Pipeline Setup — First Pass (RFE project, existing skill/image)
@@ -86,7 +92,7 @@ For our setup, pipeline runs on `itup-alm-x86` runners behind VPN. Direct connec
 | Variable | Value | Notes |
 |----------|-------|-------|
 | `JIRA_PREFIX` | `RFE` | Overrides default `RHAIRFE` |
-| `JIRA_API_TOKEN` | Jira bot account token | Already provisioned |
+| `JIRA_API_TOKEN` | Jira bot account token | Live value lives in the GitLab CI/CD variables on the fork. Vault backing record: `engineering-productivity/hp-org-pulse/JIRA`. Classic token (no scopes), 90-day expiry — rotating Vault does **not** update the GitLab copy. See [[rfe-assessor-data-pipeline]] for the silent-truncation failure mode. |
 | `GITLAB_HOST` | `gitlab.cee.redhat.com` | Overrides default `gitlab.com` |
 | `RESULTS_REPO` | `hcm-engprod/rfe-assess-data` | `gitlab.cee.redhat.com` |
 | `RESULTS_PUSH_TOKEN` | Project access token | `write_repository` scope on data repo. Vault: `engineering-productivity/hp-org-pulse/stage/rfe-assessor` key: `results_push_token` |
@@ -101,6 +107,14 @@ For our setup, pipeline runs on `itup-alm-x86` runners behind VPN. Direct connec
 3. **Parameterize rfe-assessor (ENGPROD-10099)** — MR !1 on `parameterize-jira-prefix` branch. Deferred — using variable overrides for first pass instead.
 
 ## Recent Progress
+### 2026-10-08
+- Filed the hardening work from the 09-01 silent-upload outage as tracked Jira. Epic [ENGPROD-10422](https://redhat.atlassian.net/browse/ENGPROD-10422) — "Harden the RFE assessor pipeline and alert on failures" — sits under initiative [PLATENG-179](https://redhat.atlassian.net/browse/PLATENG-179), component Org-Pulse AI Dashboard, team HP-OrgPulse.
+- [ENGPROD-10423](https://redhat.atlassian.net/browse/ENGPROD-10423) — Fail the org-pulse relay on upload and configuration errors. MR !7 only made the `scores.csv` *schema* path fail loudly; six exit paths in `push-to-org-pulse.py` still return 0. Four are pre-push skips (`ORG_PULSE_URL` unset, `ORG_PULSE_API_TOKEN` unset, missing `RFE/current`, missing `scores.csv`); two are post-push (`batch_errors` from network/auth/non-2xx, `entry_errors` from org-pulse validation) — both currently print a WARNING and exit clean.
+- [ENGPROD-10424](https://redhat.atlassian.net/browse/ENGPROD-10424) — Report assess-rfe pipeline failures to the team Slack alert channel (#hp-platform-engineering-productivity-notifications, `C06M2S4FYNN`). Covers both the assess and relay stages, scoped to scheduled pipelines only via `CI_PIPELINE_SOURCE` to avoid alert fatigue on MR and manual runs. Needs a Slack webhook or bot token as a masked GitLab CI/CD variable.
+- Two design decisions captured in the tickets: bounded retry on transport errors before failing the job, so a transient org-pulse outage doesn't become a red weekly build; and reuse of the existing 50% threshold from the "refusing to push a partial run" check for `entry_errors`, keeping the two consistency gates aligned.
+- Explicitly out of scope, recorded in the epic rather than dropped: backfilling 2026-09-01 → 10-05 (source data has moved on), detecting silently truncated Jira fetches, lifting the rubric pin, and `Containerfile.org-pulse` cache invalidation.
+- ENGPROD-10424 carries an acceptance criterion that the new Slack credential be documented in `AGENTS.md` with Vault location and rotation owner — applying the `JIRA_API_TOKEN` lesson that a Vault rotation does not propagate to the GitLab copy.
+
 ### 2026-07-17
 - Explored Agent Control Plane (ACP) as potential solution for running OpenShell on OpenShift. ACP uses a custom `openshell-sandbox` SCC with 7 capabilities (NET_ADMIN, SYS_ADMIN, SYS_PTRACE, SETUID, SETGID, CHOWN, DAC_OVERRIDE) — not fully privileged. Two modes: file mode and gateway mode. Local dev on Kind via `make kind-up`. The `openshift-cronjob` branch of rfe-assessor uses `--backend local` (no sandbox), gap to ACP is moderate. Next: draft an ACP Agent definition YAML for rfe-assessor, test on Kind.
 

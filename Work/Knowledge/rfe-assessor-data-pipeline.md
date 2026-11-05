@@ -255,8 +255,8 @@ Runs only if `ORG_PULSE_URL` and `ORG_PULSE_API_TOKEN` are both set. **Non-block
 
 | Secret | Stored In | Used By | Purpose |
 |--------|-----------|---------|---------|
-| `JIRA_API_TOKEN` | GitLab CI var | `runner.py` → sandbox env | Jira API auth |
-| `JIRA_USER` | GitLab CI var (optional) | `runner.py` → sandbox env | Jira username |
+| `JIRA_API_TOKEN` | GitLab CI var (Vault backing: `engineering-productivity/hp-org-pulse/JIRA`) | `runner.py` → sandbox env | Jira API auth |
+| `JIRA_USER` | GitLab CI var (optional) — bot account email, same Vault entry | `runner.py` → sandbox env | Jira username |
 | `AIPCC_CICD_GCP_SERVICE_ACCOUNT_KEY` | GitLab File var | `cli.py` → ADC path | Vertex AI (Claude) auth |
 | `AIPCC_CICD_GCP_PROJECT_ID` | GitLab CI var | `cli.py` → `ANTHROPIC_VERTEX_PROJECT_ID` | Vertex AI project |
 | `RESULTS_PUSH_TOKEN` | GitLab CI var | `clone-data-repo.sh`, `push-results.py` | Data repo push auth |
@@ -264,6 +264,45 @@ Runs only if `ORG_PULSE_URL` and `ORG_PULSE_API_TOKEN` are both set. **Non-block
 | `ORG_PULSE_URL` | GitLab CI var | `push-to-org-pulse.py` | Org Pulse base URL |
 
 **Security pattern**: `RESULTS_PUSH_TOKEN` is saved to file then `unset` from environment before the sandbox starts. Claude can't access it. Post-processing scripts re-read from file.
+
+### Jira token: silent truncation failure mode
+
+**The GitLab CI/CD variable is the live value.** Vault is only the backing
+record — rotating the Vault entry does not propagate, the CI variable on
+`hcm-engprod/rfe-assessor` has to be updated separately. Jira Cloud caps API
+tokens at a 90-day expiry, so this comes round roughly quarterly.
+
+**A bad Jira token does not throw an auth error.** Expired, revoked, or
+over-scoped tokens all get `200` back with a silently incomplete result set.
+That propagates straight through the pipeline:
+
+```
+bad token → dump_jira.py writes a short cache (no error)
+          → setup_run.py picks the newest N from whatever is in the cache
+          → scorers run, scores.csv is written, push succeeds
+          → run looks completely healthy, just missing issues
+```
+
+`setup_run.py --limit N --newest` makes this worse rather than louder: it always
+finds N keys, so it just reaches further back in time to fill the quota. The
+only visible symptom is that the assessed key range spans more keys than the
+limit.
+
+Two sightings:
+
+- **2026-09-21** — org-pulse CVE Triage returned ~50 CVEs instead of 100k+. Bot
+  account token had been revoked. Confirmed by re-running the same JQL under a
+  different token.
+- **2026-10-07** — RFE run `20261007-154237` held 500 results spanning keys
+  9215..9990 (776 possible). Of 276 absent keys, a 15-key sample split cleanly:
+  every absent issue carried Jira security level `10034` ("Red Hat Employee and
+  Contractors only"), every present issue carried none. Consistent with the
+  pipeline token lacking that security level — a personal account sees all of
+  them.
+
+**Diagnostic**: run `dump_jira.py` locally under the CI token and compare its
+issue count to the same JQL under a known-good token. Testing with a personal
+token will not reproduce it.
 
 ## Timing & Lifecycle
 

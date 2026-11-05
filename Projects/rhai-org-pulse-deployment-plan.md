@@ -283,8 +283,30 @@ Org Pulse needs 7 secrets (plus 1 optional) to operate. All secrets land in Vaul
 
 1. **Request a Jira bot account** — Follow the process at [How to request a Bot Account for Red Hat Jira or Confluence](https://redhat.atlassian.net/wiki/spaces/OMEGA/pages/303600841/How+to+request+a+Bot+Account+for+Red+Hat+Jira+or+Confluence). There is an option to link the bot account to a Red Hat SSO account — asking the RHEL AI team whether that's needed for their setup. **Submitted**: [JIRACONFSD-8589](https://redhat.atlassian.net/servicedesk/customer/portal/67/JIRACONFSD-8589) (2026-05-29).
 2. **Create the API token** — Log into [Atlassian API token management](https://id.atlassian.com/manage-profile/security/api-tokens) as the bot account. Create a token (not a "token with scopes"). Set a descriptive label like `org-pulse-stage 2026-Q3`. Expiry is **90 days** maximum (Jira Cloud policy).
-3. **Store in Vault** — Save the email + token to `engineering-productivity/hp-org-pulse/stage-jira-token` (and `prod-jira-token` for prod). Vault UI: [vault.devshift.net](https://vault.devshift.net/ui/vault/secrets/engineering-productivity/).
+3. **Store in Vault** — Save the email + token to `engineering-productivity/hp-org-pulse/JIRA` (shared across stage/prod). Vault UI: [vault.devshift.net](https://vault.devshift.net/ui/vault/secrets/engineering-productivity/).
+
+   > **Path note (2026-10-07):** this step originally specified
+   > `stage-jira-token` / `prod-jira-token`, but that is not what was actually
+   > done — the DONE note below records a single shared `hp-org-pulse/JIRA`
+   > entry, and Daily 2026-06-02 agrees. Step updated to match reality. A third
+   > path, `engineering-productivity/JIRA-bot`, appears in Daily 2026-06-02 for
+   > the bot account *login and 2FA recovery code* (as distinct from the API
+   > token). **Unverified** — nobody has confirmed against Vault which of these
+   > entries still exist. Worth a cleanup pass.
 4. **Rotation reminder** — Token expires every 90 days. Consider setting up a Prometheus alert similar to what App-SRE does (`resources/observability/prometheusrules/app-sre-jira-bot-token.prometheusrules.yml`) or at minimum a calendar reminder.
+
+   **Rotation is not just Vault.** Every consumer holds its own copy and must be
+   updated in the same pass:
+
+   | Consumer | Where the copy lives |
+   |---|---|
+   | org-pulse stage/prod | OpenShift secret, synced from Vault |
+   | rfe-assessor pipeline | GitLab CI/CD variable `JIRA_API_TOKEN` on `hcm-engprod/rfe-assessor` (`gitlab.cee.redhat.com`) — **not** synced from Vault |
+
+   Missing one is silent: Jira answers a stale or over-scoped token with `200`
+   and a truncated result set rather than an auth error. That is what caused the
+   CVE Triage shortfall (2026-09-21) and the RFE assessment gaps (2026-10-07).
+   See [[rfe-assessor-data-pipeline]].
 
 **Previously blocked**: Google Group `hcm-pe-engineering-productivity@redhat.com` didn't allow external posts. **Resolved** (2026-06-01) — switched to using `platform-developerproductivity@redhat.com` instead, which already has correct permissions (allows posts from anyone on the web). The team has redundant Google Groups; this is the one with the right settings.
 
