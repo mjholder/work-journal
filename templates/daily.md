@@ -1,6 +1,5 @@
 ---
-date:
-  date_iso: null
+date: {date_iso}
 type: daily
 tags:
   - daily
